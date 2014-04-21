@@ -1,0 +1,6 @@
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home"
+export PROJECT_TYPE="java"
+export VCS_TYPE="git"
+export DEFAULT_BUILD_CMD="mvn clean install"
+
+alias editor="open /devel/eclipseAtlassian/Eclipse.app"
