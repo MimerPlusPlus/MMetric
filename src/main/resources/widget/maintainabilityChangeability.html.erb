@@ -1,0 +1,87 @@
+<table width="100%">
+<tbody><tr>
+<td valign="top" width="50%">
+
+<div class="dashbox">
+<%
+ if measure('mmetric_changeability')
+ 	active = measure('mmetric_changeability')     
+    description = active.description
+    name = active.short_name
+    metric_value = active.data
+ %>  
+	<div>
+	<h3>Changeability</h3>
+	<p>
+    	<span class="big">
+			<%= metric_value -%>
+    	</span>
+  	</p>
+  	</div>
+<%
+end
+%>
+<%
+	metrics = ['mmetric_complexity_weight','mmetric_duplication']
+	metrics.each do |metric_name| 
+		if measure(metric_name)
+		 	active = measure(metric_name)     
+		    description = active.description
+		    name = active.short_name
+		    metric_value = format_measure(metric_name, :suffix => ' ('+active.value.to_s+')')
+%>
+	<div>
+	     <h3><span title="<%= description -%>"><%= name -%></span></h3>
+	     <p>
+	    	<%= metric_value -%>
+	  	</p>
+ 	</div>	
+	<% end %>
+<% end %>
+</div> 
+
+</td><td valign="top" width="50%" nowrap="">
+<div class="dashbox">
+<%
+if measure('mmetric_cc_distribution')
+	active = measure('mmetric_cc_distribution')     
+    description = active.description
+    name = active.short_name
+
+    occ = active.data.count(';')
+    priority = Array.new(occ)
+    labels = Array.new(occ)
+    i=0
+    active.data.split(';').each do |pair|
+         priority[i] = pair.split('=')[1]
+         labels[i] = pair.split('=')[0]
+         i = i+1
+    end
+%>
+     <div>
+     <h3><span title="<%= description -%>"><%= name -%></span></h3>
+     <table>
+       <tr>
+         <td><%= labels[3]-%> ≤ </td>
+         <td align="right" style="padding-left:40px;"><%= priority[3]-%> </p>
+       </tr>
+       <tr>
+         <td><%= labels[2]-%> - <%= labels[3]-%></td>
+         <td align="right"><%= priority[2]-%> </p>
+       </tr>
+       <tr>
+         <td><%= labels[1]-%> - <%= labels[2]-%></td>
+         <td align="right"><%= priority[1]-%> </p>
+       </tr>
+       <tr>
+         <td> < <%= labels[1]-%> </td>
+         <td align="right"><%= priority[0]-%> </p>
+       </tr>
+ 
+     </table>
+ </div>
+<%
+end
+%>
+</div>
+</td></tr></tbody></table>

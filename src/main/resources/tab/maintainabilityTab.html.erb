@@ -1,0 +1,102 @@
+<%
+	# Collect all domains
+	all_domains = ['Maintainability','Analysability','Changeability','Stability','Testability','Background metrics'];
+	metric_names_by_domain = {};
+	metrics_by_domain = {};
+	measures_by_domain = {};
+
+	metric_names_by_domain['Maintainability'] = ['mmetric_maintainability','mmetric_analysability','mmetric_changeability','mmetric_stability','mmetric_testablity'];
+	metric_names_by_domain['Analysability'] = ['mmetric_loc','mmetric_duplication','mmetric_loc_weight','mmetric_coverage'];
+	metric_names_by_domain['Changeability'] = ['mmetric_complexity_weight','mmetric_duplication'];
+	metric_names_by_domain['Stability'] = ['mmetric_coverage'];
+	metric_names_by_domain['Testability'] = ['mmetric_complexity_weight','mmetric_loc_weight','mmetric_coverage'];
+	
+	metric_names_by_domain['Background metrics'] = ['ncloc','duplicated_lines','complexity','coverage','mmetric_loc_distribution','mmetric_cc_distribution','mmetric_coverage'];
+
+	# Collect all metrics and measures
+	all_domains.each do |domain|
+		if(!domain.nil? && domain.length > 0)
+			# Initialize
+			metrics_by_domain[domain] = [];
+			measures_by_domain[domain] = [];
+
+			# Metrics by domain
+			metrics_of_domain = metric_names_by_domain[domain];
+			if(!metrics_of_domain.nil?)
+				metrics_of_domain.each do |metricName|
+					if(!metricName.nil?)
+						metricObj = metric(metricName)
+						if(!metricObj.nil?)
+							measureObj = measure(metricObj.key);
+	
+							# NUMERIC or DATA
+							if (!measureObj.nil? && ((metricObj.numeric? && !measureObj.value.nil?) || (metricObj.data? && !measureObj.data.nil? && measureObj.data.length > 0)) )
+								metrics_by_domain[domain] << metricObj;
+								measures_by_domain[domain] << measureObj;
+							end
+	else %>
+		Wrong metric name <%= metricName -%>
+	<%					end
+					end
+				end
+			end
+		end
+	end
+
+%>
+<div style="width: 100%">
+	<% 
+		all_domains.each do |domain|
+			if(!domain.nil? && domain.length > 0)
+				metricsArray = metrics_by_domain[domain];
+				measuresArray = measures_by_domain[domain];
+	%>
+					<div class="tab_header">
+						<div>
+							<h3><%= domain -%> </h3>
+						</div>
+	<%
+
+				if (!metricsArray.nil? && !measuresArray.nil? && metricsArray.length > 0 && measuresArray.length > 0)
+	%>
+						<div>
+							<table width="100%">
+								<tbody>
+									<% 
+										mcount = 0;
+										metricsArray.each do |metricObj|
+									%>
+											<tr>
+												<td nowrap width="20%">
+													<p>
+														<%= metricObj.short_name -%>:
+													</p>
+												</td>
+												<td nowrap width="15%">
+													<p> 
+														<% if (metricObj.numeric?) %>
+															<b><%= format_measure(metricObj.key) -%></b>
+														<% elsif (metricObj.data?) %>
+															<input type="text" style="background-color: #EFEFEF; font-weight: bold" readonly="readonly" value="<%= measuresArray[mcount].data -%>">
+														<% end %> 
+													</p>
+												</td>
+												<td width="65%">
+													<span style="font-style: italic"><%= metricObj.description -%></span>
+												</td>
+											</tr>
+											<% mcount = mcount + 1 %>
+									<% end %>
+								</tbody>
+							</table>
+						</div>
+	<% 			
+				end 
+				
+	%>
+					</div>
+	<%
+			end 
+		end 
+	%>
+</div>

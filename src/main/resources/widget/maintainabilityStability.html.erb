@@ -1,0 +1,39 @@
+<div class="dashbox">
+<%
+ if measure('mmetric_stability')
+ 	active = measure('mmetric_stability')     
+    description = active.description
+    name = active.short_name
+    metric_value = active.data
+ %>  
+	<div>
+	<h3>Stability</h3>
+	<p>
+    	<span class="big">
+			<%= metric_value -%>
+    	</span>
+  	</p>
+  	</div>
+<%
+end
+%>
+
+<%
+	metrics = ['mmetric_coverage']
+	metrics.each do |metric_name| 
+		if measure(metric_name)
+		 	active = measure(metric_name)     
+		    description = active.description
+		    name = active.short_name
+		    metric_value = format_measure(metric_name, :suffix => ' ('+active.value.to_s+')')
+%>
+	<div>
+	     <h3><span title="<%= description -%>"><%= name -%></span></h3>
+	     <p>
+	    	<%= metric_value -%>
+	  	</p>
+ 	</div>	
+	<% end %>
+<% end %>
+
+</div></div>
