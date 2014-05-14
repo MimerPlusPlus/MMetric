@@ -21,10 +21,12 @@ public class LinesOfCodeWeight extends AbstractWeightDecorator implements Decora
 		return Arrays.asList(getDecoratedMetric());
 	}
 	
+	@Override
 	public Metric getDecoratedMetric() {
 		return DECORATED_METRIC;
 	}
 
+	@Override
 	Number[] getVolumeDistribution() {
 		return VOLUME_DISTRIBUTION;
 	}

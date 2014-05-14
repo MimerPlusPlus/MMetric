@@ -28,7 +28,7 @@ public class MaintainabilityRubyTab extends AbstractRubyTemplate implements Ruby
 	 * Tab Template path
 	 */
 	@Override
-	protected final String getTemplatePath() {
+	public final String getTemplatePath() {
 		return "/tab/maintainabilityTab.html.erb";
 	}
 

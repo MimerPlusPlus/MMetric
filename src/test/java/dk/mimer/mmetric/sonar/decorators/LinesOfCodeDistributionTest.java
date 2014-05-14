@@ -1,23 +1,15 @@
 package dk.mimer.mmetric.sonar.decorators;
 
-import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
-import org.mockito.Mock;
 import org.sonar.api.batch.DecoratorContext;
-import org.sonar.api.measures.Measure;
 import org.sonar.api.resources.Java;
 import org.sonar.api.resources.JavaFile;
 import org.sonar.api.resources.JavaPackage;
-import org.sonar.api.resources.Language;
 import org.sonar.api.resources.Method;
-import org.sonar.api.resources.Project;
-import org.sonar.api.resources.Resource;
 
 import dk.mimer.mmetric.sonar.value.MeasureWeight;
 

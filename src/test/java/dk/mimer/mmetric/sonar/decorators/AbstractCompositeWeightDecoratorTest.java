@@ -5,13 +5,19 @@ import static dk.mimer.mmetric.sonar.value.MeasureWeight.MINUS_MINUS;
 import static dk.mimer.mmetric.sonar.value.MeasureWeight.PLUS;
 import static dk.mimer.mmetric.sonar.value.MeasureWeight.PLUS_PLUS;
 import static dk.mimer.mmetric.sonar.value.MeasureWeight.ZERO;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
+import org.sonar.api.batch.DecoratorContext;
+import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.Metric;
+import org.sonar.api.resources.JavaFile;
 import org.sonar.api.resources.Project;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -22,11 +28,95 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-
 import dk.mimer.mmetric.sonar.value.MeasureWeight;
+import dk.mimer.mmetric.sonar.value.MeasureWeightTest;
 
 public class AbstractCompositeWeightDecoratorTest {
 
+	
+	@Test
+	public void testThatRootResourceIsCounted() {
+		final MeasureWeight AN_MEASURE_WEIGHT = MeasureWeight.MINUS_MINUS;
+		final boolean[] methodCalled = {false,false,false,false};
+		AbstractCompositeWeightDecorator decorator = new TestableCompositeDecorator() {
+			public boolean shouldPersistMeasures(DecoratorContext context) {
+				methodCalled[0] = true;
+				return true;
+			}
+			@Override
+			MeasureWeight calculateAverage(List<Measure> measures) {
+				methodCalled[1] = true;
+				return AN_MEASURE_WEIGHT;
+			}
+			@Override
+			void saveMeasure(DecoratorContext context, Measure measure) {
+				methodCalled[2] = true;
+			}
+			@Override
+			List<Measure> getMeasures(DecoratorContext context) {
+				methodCalled[3] = true;
+				return null;
+			}
+			@Override
+			public Metric getMetric() {
+				return CoreMetrics.COMPLEXITY;
+			}
+		};
+		
+		DecoratorContext context = mock(DecoratorContext.class);
+		decorator.decorate(new JavaFile("ANY_RESOURCE"), context);
+		assertTrue(methodCalled[0] && methodCalled[1] && methodCalled[2] && methodCalled[3]);
+	}
+	
+	@Test
+	public void testNotPersistedOfShouldnt() {
+		final MeasureWeight AN_MEASURE_WEIGHT = MeasureWeight.MINUS_MINUS;
+		final boolean[] methodCalled = {false,false,false,false};
+		AbstractCompositeWeightDecorator decorator = new TestableCompositeDecorator() {
+			public boolean shouldPersistMeasures(DecoratorContext context) {
+				methodCalled[0] = true;
+				return false;
+			}
+			@Override
+			MeasureWeight calculateAverage(List<Measure> measures) {
+				methodCalled[1] = true;
+				return AN_MEASURE_WEIGHT;
+			}
+			@Override
+			void saveMeasure(DecoratorContext context, Measure measure) {
+				methodCalled[2] = true;
+			}
+			@Override
+			List<Measure> getMeasures(DecoratorContext context) {
+				methodCalled[3] = true;
+				return null;
+			}
+			@Override
+			public Metric getMetric() {
+				return CoreMetrics.COMPLEXITY;
+			}
+		};
+		
+		DecoratorContext context = mock(DecoratorContext.class);
+		decorator.decorate(new JavaFile("ANY_RESOURCE"), context);
+		assertTrue(methodCalled[0] && !(methodCalled[1] || methodCalled[2] || methodCalled[3]));
+	}
+
+	@Test
+	public void getMeasures() {
+		AbstractCompositeWeightDecorator decorator = new TestableCompositeDecorator() {
+			protected java.util.List<Metric> getDecoratedMetrics() {
+				return Arrays.asList(CoreMetrics.NCLOC);
+			}
+		};
+		DecoratorContext context = mock(DecoratorContext.class);
+		when(context.getMeasure(CoreMetrics.NCLOC)).thenReturn(new Measure().setValue(123.0));
+		List<Measure> measures = decorator.getMeasures(context);
+		assertNotNull(measures);
+		assertTrue(measures.size() == 1);
+	}
+	
+	
 	@Test
 	public void testCalculateAverage() {
 		AbstractCompositeWeightDecorator a = new AbstractCompositeWeightDecorator() {
@@ -42,6 +132,43 @@ public class AbstractCompositeWeightDecoratorTest {
 		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(ZERO,PLUS)));
 		
 		assertEquals(MINUS, a.calculateWeightAverage(Arrays.asList(MINUS_MINUS,MINUS_MINUS,PLUS_PLUS)));
+	}
+	
+	@Test
+	public void testCalculateAverages() {
+		List<Measure> measures = new ArrayList<Measure>();
+		measures.add(new Measure().setData("++"));
+		measures.add(new Measure().setData("+"));
+		measures.add(new Measure().setData("+"));
+		MeasureWeight average = new TestableCompositeDecorator().calculateAverage(measures);
+		assertNotNull(average);
+		assertEquals(MeasureWeight.PLUS, average);
+	}
+	
+	@Test
+	public void testCalculateAveragesAllMinuses() {
+		List<Measure> measures = new ArrayList<Measure>();
+		measures.add(new Measure().setData("--"));
+		measures.add(new Measure().setData("--"));
+		measures.add(new Measure().setData("--"));
+		MeasureWeight average = new TestableCompositeDecorator().calculateAverage(measures);
+		assertNotNull(average);
+		assertEquals(MeasureWeight.MINUS_MINUS, average);
+	}
+	
+}
+
+class TestableCompositeDecorator extends AbstractCompositeWeightDecorator {
+
+	public Metric getMetric() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected List<Metric> getDecoratedMetrics() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

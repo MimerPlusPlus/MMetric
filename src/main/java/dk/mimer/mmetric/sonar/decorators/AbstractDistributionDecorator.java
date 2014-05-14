@@ -13,17 +13,22 @@ public abstract class AbstractDistributionDecorator extends AbstractDecorator im
 
 	abstract Number[] getVolumeDistribution();
 	
+	/**
+	 * The method is executed on the whole tree of resources.
+	 * Bottom-up navigation : Java methods -> Java classes -> files -> packages -> modules -> project
+	 *
+	 * @param resource
+	 * @param context
+	 */
 	public void decorate(Resource resource, DecoratorContext context) {
-		// This method is executed on the whole tree of resources.
-		// Bottom-up navigation : Java methods -> Java classes -> files -> packages -> modules -> project
 		logDecoration(resource, context);
 		
-		if (Scopes.isBlockUnit(resource)) {
+		if (isRootResource(resource)) {
 			logger.debug("We've stumbled into a method...");
 			// Sonar API includes many libraries like commons-lang and google-collections
 	
 			Measure measure = buildBlockMetricDistribution(context, getDecoratedMetric(), getMetric(), getVolumeDistribution());
-			logger.debug("Data from block measure: " + measure.getData());
+			logger.debug("Data from block measure: " + (measure != null ? measure.getData() : null));
 			context.saveMeasure(measure);
 		} else {
 			Measure measure = buildCombinedMetricDistribution(context, getMetric(), getVolumeDistribution());
@@ -37,6 +42,14 @@ public abstract class AbstractDistributionDecorator extends AbstractDecorator im
 	}
 
 	/**
+	 * @param resource The resource currently being investigated.
+	 * @return true if the parameter resource, is a "root" resource, that is to be counted using the Metric.
+	 */
+	boolean isRootResource(Resource resource) {
+		return Scopes.isBlockUnit(resource);
+	}
+
+	/**
 	 * Combine metrics from collected Methods (blocks).
 	 * 
 	 * @param context
@@ -44,7 +57,7 @@ public abstract class AbstractDistributionDecorator extends AbstractDecorator im
 	 * @param bottomLimits
 	 * @return a combined measure...
 	 */
-	private Measure buildCombinedMetricDistribution(DecoratorContext context, Metric metric, Number[] bottomLimits) {
+	Measure buildCombinedMetricDistribution(DecoratorContext context, Metric metric, Number[] bottomLimits) {
 		RangeDistributionBuilder builder = new RangeDistributionBuilder(metric, bottomLimits);
 		for (Measure childMeasure : context.getChildrenMeasures(metric)) {
 			builder.add(childMeasure);
@@ -52,7 +65,7 @@ public abstract class AbstractDistributionDecorator extends AbstractDecorator im
 		return builder.build();
 	}
 
-	private Measure buildBlockMetricDistribution(DecoratorContext context, Metric metric, Metric resultMetric, Number[] bottomLimits) {
+	Measure buildBlockMetricDistribution(DecoratorContext context, Metric metric, Metric resultMetric, Number[] bottomLimits) {
 		logger.debug("  - Building block? " + metric.getName()+" / "+resultMetric.getName());
 		int measure = MeasureUtils.getValue(context.getMeasure(metric), 0.0).intValue();
 		//int ncloc = MeasureUtils.getValue(context.getMeasure(CoreMetrics.NCLOC), 0.0).intValue();

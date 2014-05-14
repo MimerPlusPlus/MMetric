@@ -2,7 +2,11 @@ package dk.mimer.mmetric.sonar.decorators;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.junit.Test;
+import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Metric;
 
 import dk.mimer.mmetric.sonar.value.MeasureWeight;
 
@@ -12,6 +16,14 @@ public class CodeDuplicationWeightTest {
 	public void testDecoratedNotSameAsMetric() {
 		CodeDuplicationWeight d = new CodeDuplicationWeight();
 		assertNotEquals(d.getMetric(), d.getDecoratedMetric());
+	}
+	
+	@Test
+	public void testDependsUponCoverageMetric() {
+		List<Metric> du = new CodeDuplicationWeight().dependsUpon();
+		assertNotNull(du);
+		assertEquals(1, du.size());
+		assertEquals(CoreMetrics.DUPLICATED_LINES_DENSITY, du.get(0));
 	}
 	
 	@Test

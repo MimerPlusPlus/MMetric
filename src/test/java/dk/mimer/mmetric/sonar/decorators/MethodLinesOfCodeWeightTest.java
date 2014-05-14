@@ -2,12 +2,17 @@ package dk.mimer.mmetric.sonar.decorators;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.sonar.api.batch.DecoratorContext;
+import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Measure;
+import org.sonar.api.measures.Metric;
 
 import dk.mimer.mmetric.sonar.value.MeasureWeight;
 
@@ -19,7 +24,11 @@ public class MethodLinesOfCodeWeightTest {
 		assertNotEquals(d.getMetric(), d.getDecoratedMetric());
 	}
 	
-	
+	@Test
+	public void testDependsUponMethodLinesOfCodeDistributionMetric() {
+		assertEquals(MethodLinesOfCodeDistribution.METRIC, new MethodLinesOfCodeWeight().dependsUpon());
+	}
+
 	@Test
 	public void testCalculationPlusPlus() {
 		assertEquals(MeasureWeight.PLUS_PLUS, runCalculationWithMock("80=0;40=0;10=0;0=10"));

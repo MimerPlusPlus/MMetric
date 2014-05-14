@@ -1,9 +1,12 @@
 package dk.mimer.mmetric.sonar.decorators;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
+
+import java.util.List;
 
 import org.junit.Test;
+import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Metric;
 
 import dk.mimer.mmetric.sonar.value.MeasureWeight;
 
@@ -14,6 +17,15 @@ public class TestCoverageWeightTest {
 		TestCoverageWeight d = new TestCoverageWeight();
 		assertNotEquals(d.getMetric(), d.getDecoratedMetric());
 	}
+	
+	@Test
+	public void testDependsUponCoverageMetric() {
+		List<Metric> du = new TestCoverageWeight().dependsUpon();
+		assertNotNull(du);
+		assertEquals(1, du.size());
+		assertEquals(CoreMetrics.COVERAGE, du.get(0));
+	}
+	
 	
 	@Test
 	public void testDistributionHigh() {
