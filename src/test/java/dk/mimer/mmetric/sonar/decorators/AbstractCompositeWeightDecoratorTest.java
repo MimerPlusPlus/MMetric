@@ -138,11 +138,25 @@ public class AbstractCompositeWeightDecoratorTest {
 	public void testCalculateAverages() {
 		List<Measure> measures = new ArrayList<Measure>();
 		measures.add(new Measure().setData("++"));
+		measures.add(new Measure().setData("++"));
 		measures.add(new Measure().setData("+"));
-		measures.add(new Measure().setData("+"));
+		measures.add(new Measure().setData("0"));
 		MeasureWeight average = new TestableCompositeDecorator().calculateAverage(measures);
 		assertNotNull(average);
 		assertEquals(MeasureWeight.PLUS, average);
+	}
+	
+	@Test
+	public void testCalculateAveragesZero() {
+		List<Measure> measures = new ArrayList<Measure>();
+		measures.add(new Measure().setData("+"));
+		measures.add(new Measure().setData("+"));
+		measures.add(new Measure().setData("+"));
+		measures.add(new Measure().setData("0"));
+		measures.add(new Measure().setData("0"));
+		MeasureWeight average = new TestableCompositeDecorator().calculateAverage(measures);
+		assertNotNull(average);
+		assertEquals(MeasureWeight.ZERO, average);
 	}
 	
 	@Test
