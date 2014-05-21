@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.sonar.api.batch.Decorator;
 import org.sonar.api.batch.DependsUpon;
+import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.Metric;
 
@@ -39,7 +40,7 @@ public class MethodComplexityWeight extends AbstractDistributedWeightDecorator i
 
 	@DependsUpon
 	public List<Metric> dependsUpon() {
-		return Arrays.asList(getDecoratedMetric());
+		return Arrays.asList(getDecoratedMetric(), CoreMetrics.NCLOC);
 	}
 	
 	double[] getDistributionValues(Measure measure) {

@@ -5,10 +5,13 @@ import static dk.mimer.mmetric.sonar.value.MeasureWeight.PLUS;
 import static dk.mimer.mmetric.sonar.value.MeasureWeight.PLUS_PLUS;
 import static dk.mimer.mmetric.sonar.value.MeasureWeight.ZERO;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.sonar.api.batch.Decorator;
 import org.sonar.api.batch.DependsUpon;
+import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.Metric;
 
@@ -22,8 +25,8 @@ public class MethodLinesOfCodeWeight extends AbstractDistributedWeightDecorator 
 	private HashMap<MeasureWeight, double[]> boundries = null;
 
 	@DependsUpon
-	public Metric dependsUpon() {
-		return getDecoratedMetric();
+	public List<Metric> dependsUpon() {
+		return Arrays.asList(getDecoratedMetric(), CoreMetrics.NCLOC);
 	}
 	
 	@Override

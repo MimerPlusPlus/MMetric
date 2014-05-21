@@ -130,8 +130,23 @@ public class AbstractCompositeWeightDecoratorTest {
 		assertEquals(MINUS, a.calculateWeightAverage(Arrays.asList(MINUS,MINUS,MINUS)));
 		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(ZERO,ZERO,ZERO,ZERO,PLUS)));
 		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(ZERO,PLUS)));
-		
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(PLUS_PLUS,PLUS_PLUS,ZERO,MINUS_MINUS)));
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(PLUS_PLUS,PLUS_PLUS,PLUS,MINUS_MINUS)));
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(PLUS_PLUS,MINUS_MINUS,ZERO)));
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(PLUS,MINUS_MINUS,PLUS)));
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(PLUS,MINUS_MINUS,PLUS)));
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(ZERO,PLUS_PLUS, MINUS_MINUS,ZERO)));
 		assertEquals(MINUS, a.calculateWeightAverage(Arrays.asList(MINUS_MINUS,MINUS_MINUS,PLUS_PLUS)));
+		
+		assertEquals(PLUS, a.calculateWeightAverage(Arrays.asList(MINUS_MINUS,PLUS_PLUS,PLUS_PLUS,PLUS_PLUS)));
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(MINUS_MINUS,PLUS_PLUS,PLUS_PLUS)));
+		
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(MINUS_MINUS,PLUS_PLUS,PLUS,ZERO)));
+		
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(MINUS,PLUS_PLUS,PLUS_PLUS,ZERO)));
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(MINUS,PLUS_PLUS,PLUS)));
+		
+		assertEquals(ZERO, a.calculateWeightAverage(Arrays.asList(MINUS,PLUS_PLUS,PLUS,PLUS)));
 	}
 	
 	@Test

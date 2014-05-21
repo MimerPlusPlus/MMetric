@@ -1,6 +1,7 @@
 package dk.mimer.mmetric.sonar.decorators;
 
 import org.sonar.api.batch.DecoratorContext;
+import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasureUtils;
 import org.sonar.api.measures.Metric;
@@ -68,10 +69,17 @@ public abstract class AbstractDistributionDecorator extends AbstractDecorator im
 	Measure buildBlockMetricDistribution(DecoratorContext context, Metric metric, Metric resultMetric, Number[] bottomLimits) {
 		logger.debug("  - Building block? " + metric.getName()+" / "+resultMetric.getName());
 		int measure = MeasureUtils.getValue(context.getMeasure(metric), 0.0).intValue();
-		//int ncloc = MeasureUtils.getValue(context.getMeasure(CoreMetrics.NCLOC), 0.0).intValue();
-		int value = 1; 
+		int value = MeasureUtils.getValue(context.getMeasure(CoreMetrics.NCLOC), 0.0).intValue();
 		RangeDistributionBuilder distribution = new RangeDistributionBuilder(resultMetric, bottomLimits);
 		distribution.add(measure, value);
+		
+		if (measure > bottomLimits[0].intValue()) {
+			logger.warn("MinusMinus grade given for ["+getMetric().getKey()+"] with value ["+measure+"] and nloc ["+value+"] to: "+context.getResource().getLongName());
+		}
+		if (measure > bottomLimits[1].intValue()) {
+			logger.warn("Minus grade given for ["+getMetric().getKey()+"] with value ["+measure+"] and nloc ["+value+"] to: "+context.getResource().getLongName());
+		}
+		
 		return distribution.build();
 	}
 

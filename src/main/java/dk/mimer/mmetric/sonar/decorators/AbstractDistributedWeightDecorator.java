@@ -85,7 +85,7 @@ public abstract class AbstractDistributedWeightDecorator extends AbstractWeightD
 		for (int i = 0; hold && i < boundries.length; i++) {
 			hold = (boundries[i] < 0 || values[i]== 0 || values[i] <= boundries[i]); // Less that 0 is not good ;-)
 			if (!hold) {
-				System.out.println("Failed Upper Boundry test ["+i+"]: "+values[i]+ " < "+boundries[i]);
+				System.out.println("Failed Upper Boundry test ["+i+"]: "+values[i]+ " <= "+boundries[i]);
 			}
 		}
 		return hold;
