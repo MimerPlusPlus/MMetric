@@ -17,25 +17,22 @@ import org.sonar.api.measures.Metric;
 
 import dk.mimer.mmetric.sonar.MaintainabilityMetrics;
 import dk.mimer.mmetric.sonar.value.MeasureWeight;
+import dk.mimer.mmetric.sonar.value.Risk;
 
 public class MethodComplexityWeight extends AbstractDistributedWeightDecorator implements Decorator {
 
 	public static final Metric METRIC = MaintainabilityMetrics.COMPLEXITY_WEIGHT;
 	public static final Metric DECORATED_METRIC = MethodComplexityDistribution.METRIC;
-	private HashMap<MeasureWeight, double[]> boundries = null;
+	private double[][] riskBoundries = new double[][] {
+			new double[] 	{	100, 100, 100, 100},
+			new double[] 	{	 25, 30, 40, 50 },
+			new double [] 	{ 	  0,  5, 10, 15 },
+			new double[] 	{ 	  0,  0,  0,  5 }
+	};
 	
-	protected double[] getDistributionUpperBoundry(MeasureWeight measureWeight) {
-		init();
-		return boundries.get(measureWeight); 
-	}
-	
-	private void init() {
-		boundries = new HashMap<MeasureWeight, double[]>();
-		boundries.put(PLUS_PLUS,   	new double[] {-1,	25,	 0,	0});
-		boundries.put(PLUS,        	new double[] {-1,	30,	 5,	0});
-		boundries.put(ZERO,       	new double[] {-1,	40,	10,	0});
-		boundries.put(MINUS, 		new double[] {-1,	50,	15,	5}
-		);
+	@Override
+	double[] getRiskBoundries(Risk risk) {
+		return riskBoundries[risk.getValue()];
 	}
 
 	@DependsUpon

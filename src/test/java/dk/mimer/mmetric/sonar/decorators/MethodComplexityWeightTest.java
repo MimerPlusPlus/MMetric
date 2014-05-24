@@ -90,43 +90,44 @@ public class MethodComplexityWeightTest {
 	public void testIsVeryLowValue() {
 		MethodComplexityWeight mlocw = new MethodComplexityWeight();
 		double[] ANY_VERY_LOW = new double[]{ 100,4,0,0};
-		assertTrue(mlocw.isVeryLowRisk(ANY_VERY_LOW));
-		assertTrue(mlocw.isVeryLowRisk(new double[]{ 10000,0,0,0}));
-		assertTrue(mlocw.isVeryLowRisk(new double[]{ 0,0,0,0}));
+		assertTrue(mlocw.isPlusPlus(ANY_VERY_LOW));
+		assertEquals(MeasureWeight.PLUS_PLUS, mlocw.evaluateRisk(new double[]{ 100,0,0,0}));
+		assertTrue(mlocw.isPlusPlus(new double[]{ 100,0,0,0}));
+		assertTrue(mlocw.isPlusPlus(new double[]{ 0,0,0,0}));
 		
-		assertFalse(mlocw.isHighRisk(ANY_VERY_LOW));
-		assertFalse(mlocw.isLowRisk(ANY_VERY_LOW));
-		assertFalse(mlocw.isMediumRisk(ANY_VERY_LOW));
-		assertFalse(mlocw.isVeryHighRisk(ANY_VERY_LOW));
+		assertFalse(mlocw.isMinus(ANY_VERY_LOW));
+		assertFalse(mlocw.isPlus(ANY_VERY_LOW));
+		assertFalse(mlocw.isZero(ANY_VERY_LOW));
+		assertFalse(mlocw.isMinusMinus(ANY_VERY_LOW));
 	}
 	
 	@Test
 	public void testIsLowValue() {
 		MethodComplexityWeight mlocw = new MethodComplexityWeight();
 		double[] ANY_LOW = new double[]{ 74,26,0,0};
-		assertTrue(mlocw.isLowRisk(ANY_LOW));
-		assertTrue(mlocw.isLowRisk(new double[]{ 76,20,4,0}));
-		assertTrue(mlocw.isLowRisk(new double[]{ 71,29,0,0}));
-		assertFalse(mlocw.isLowRisk(new double[]{ 5.0,0.0,0.0,95.0}));
+		assertTrue(mlocw.isPlus(ANY_LOW));
+		assertTrue(mlocw.isPlus(new double[]{ 76,20,4,0}));
+		assertTrue(mlocw.isPlus(new double[]{ 71,29,0,0}));
+		assertFalse(mlocw.isPlus(new double[]{ 5.0,0.0,0.0,95.0}));
 		
-		assertFalse(mlocw.isHighRisk(ANY_LOW));
-		assertFalse(mlocw.isVeryHighRisk(ANY_LOW));
-		assertFalse(mlocw.isMediumRisk(ANY_LOW));
-		assertFalse(mlocw.isVeryLowRisk(ANY_LOW));
+		assertFalse(mlocw.isMinus(ANY_LOW));
+		assertFalse(mlocw.isMinusMinus(ANY_LOW));
+		assertFalse(mlocw.isZero(ANY_LOW));
+		assertFalse(mlocw.isPlusPlus(ANY_LOW));
 	}
 	
 	@Test
 	public void testIsMedium() {
 		MethodComplexityWeight mlocw = new MethodComplexityWeight();
 		double[] ANY_MEDIUM = new double[]{0,39,9,0};
-		assertTrue(mlocw.isMediumRisk(ANY_MEDIUM));
-		assertTrue(mlocw.isMediumRisk(new double[]{0,30,5,0}));
-		assertTrue(mlocw.isMediumRisk(new double[]{0,35,7,0}));
+		assertTrue(mlocw.isZero(ANY_MEDIUM));
+		assertTrue(mlocw.isZero(new double[]{64,31,5,0}));
+		assertTrue(mlocw.isZero(new double[]{58,35,7,0}));
 		
-		assertFalse(mlocw.isHighRisk(ANY_MEDIUM));
-		assertFalse(mlocw.isVeryHighRisk(ANY_MEDIUM));
-		assertFalse(mlocw.isLowRisk(ANY_MEDIUM));
-		assertFalse(mlocw.isVeryLowRisk(ANY_MEDIUM));
+		assertFalse(mlocw.isMinus(ANY_MEDIUM));
+		assertFalse(mlocw.isMinusMinus(ANY_MEDIUM));
+		assertFalse(mlocw.isPlus(ANY_MEDIUM));
+		assertFalse(mlocw.isPlusPlus(ANY_MEDIUM));
 		
 	}
 	
@@ -134,29 +135,29 @@ public class MethodComplexityWeightTest {
 	public void testHighRisk() {
 		MethodComplexityWeight mlocw = new MethodComplexityWeight();
 		double[] ANY_HIGH = new double[]{ 60,41,0,0};
-		assertTrue(mlocw.isHighRisk(ANY_HIGH));
-		assertTrue(mlocw.isHighRisk(new double[]{ 51,49,3,0}));
-		assertTrue(mlocw.isHighRisk(new double[]{ 71,31,7,2}));
-		assertTrue(mlocw.isHighRisk(new double[]{ 71,31,7,4}));
-		assertTrue(mlocw.isHighRisk(new double[]{ 96,0,0,4}));
-		assertTrue(mlocw.isHighRisk(new double[]{ 51.0,45.0,0.0,0.0}));
+		assertTrue(mlocw.isMinus(ANY_HIGH));
+		assertTrue(mlocw.isMinus(new double[]{ 51,49,3,0}));
+		assertTrue(mlocw.isMinus(new double[]{ 71,31,7,2}));
+		assertTrue(mlocw.isMinus(new double[]{ 71,31,7,4}));
+		assertTrue(mlocw.isMinus(new double[]{ 96,0,0,4}));
+		assertTrue(mlocw.isMinus(new double[]{ 51.0,45.0,0.0,0.0}));
 		
-		assertTrue(mlocw.isHighRisk(new double[]{ 90,0,11,0}));
+		assertTrue(mlocw.isMinus(new double[]{ 90,0,11,0}));
 		
-		assertFalse(mlocw.isMediumRisk(ANY_HIGH));
-		assertFalse(mlocw.isVeryHighRisk(ANY_HIGH));
-		assertFalse(mlocw.isLowRisk(ANY_HIGH));
-		assertFalse(mlocw.isVeryLowRisk(ANY_HIGH));
+		assertFalse(mlocw.isZero(ANY_HIGH));
+		assertFalse(mlocw.isMinusMinus(ANY_HIGH));
+		assertFalse(mlocw.isPlus(ANY_HIGH));
+		assertFalse(mlocw.isPlusPlus(ANY_HIGH));
 	}
 	
 	@Test
 	public void testVeryHighRisk() {
 		MethodComplexityWeight mlocw = new MethodComplexityWeight();
-		assertTrue(mlocw.isVeryHighRisk(new double[]{ 50,50,0,0}));
-		assertTrue(mlocw.isVeryHighRisk(new double[]{ 50,34,16,0}));
-		assertTrue(mlocw.isVeryHighRisk(new double[]{ 71,40,40,0}));
-		assertTrue(mlocw.isVeryHighRisk(new double[]{ 94,0,0,6}));
-		assertTrue(mlocw.isVeryHighRisk(new double[]{ 0.0,0.0,5.0,95.0}));
+		assertTrue(mlocw.isMinusMinus(new double[]{ 50,51,0,0}));
+		assertTrue(mlocw.isMinusMinus(new double[]{ 50,34,16,0}));
+		assertTrue(mlocw.isMinusMinus(new double[]{ 71,40,40,0}));
+		assertTrue(mlocw.isMinusMinus(new double[]{ 94,0,0,6}));
+		assertTrue(mlocw.isMinusMinus(new double[]{ 0.0,0.0,5.0,95.0}));
 	}
 	
 
