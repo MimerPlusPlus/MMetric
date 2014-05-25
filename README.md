@@ -8,6 +8,7 @@ Plug-in is tested on SonarQube version 4.1.2.
 Download and install SonarQube version 4.1.2
 
 Build the project with Maven:
+
 	mvn clean install
 
 Copy the JAR artifact to SonarQube plugin directory:
