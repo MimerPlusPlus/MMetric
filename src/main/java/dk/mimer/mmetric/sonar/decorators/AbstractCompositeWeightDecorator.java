@@ -27,6 +27,11 @@ public abstract class AbstractCompositeWeightDecorator extends AbstractDecorator
 		}
 	}
 	
+	/**
+	 * Average calculation of MeasureWeight.
+	 * @param measureWeights a list of MeasureWeights from which agerage is calculated.
+	 * @return The average MeasureWeight of parameter list.
+	 */
 	MeasureWeight calculateWeightAverage(List<MeasureWeight> measureWeights) {
 		int total = 0;
 		for (MeasureWeight measureWeight : measureWeights) {

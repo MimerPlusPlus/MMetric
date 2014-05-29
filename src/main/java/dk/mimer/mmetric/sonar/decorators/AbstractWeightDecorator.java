@@ -12,19 +12,15 @@ public abstract class AbstractWeightDecorator extends AbstractDecorator {
 	abstract Number[] getVolumeDistribution();
 	
 	public void decorate(Resource resource, DecoratorContext context) {
-		// Bottom-up navigation : Java methods -> Java classes -> files -> packages -> modules -> project
 		logDecoration(resource, context);
 		if (shouldPersistMeasures(context)) {
 			double value = getDecoratedMetricValue(context);
-			logger.debug("Decorated value of metric ["+getMetric().getName()+"] for ["+resource.getName()+"] : "+value);
 			MeasureWeight weight = calculateWeight(context);
-			logger.debug("Weight: "+weight);
+			logger.debug("Decorated value of metric ["+getMetric().getName()+"] for ["+resource.getName()+"] : "+value);
 			if (weight != null) {
 				Measure measure = new Measure(getMetric(), value, weight.getTitle());
 				saveMeasure(context, measure);
 			}
-		} else {
-			logger.debug(" - Ignoreing scope below package ["+resource.getScope()+"] : "+resource.getName()+" \n\n");
 		}
 	}
 /*

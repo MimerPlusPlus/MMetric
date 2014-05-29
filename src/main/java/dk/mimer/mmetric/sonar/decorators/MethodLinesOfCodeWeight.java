@@ -34,8 +34,8 @@ public class MethodLinesOfCodeWeight extends AbstractDistributedWeightDecorator 
 	}
 	
 	@Override
-	double[] getDistributionValues(Measure measure) {
-		return getValuesInPercentage(super.getDistributionValues(measure));
+	double[] getDistribution(Measure measure) {
+		return getValuesInPercentage(getDistributionValues(measure));
 	}
 	
 	@Override

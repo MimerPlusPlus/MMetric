@@ -40,8 +40,8 @@ public class MethodComplexityWeight extends AbstractDistributedWeightDecorator i
 		return Arrays.asList(getDecoratedMetric(), CoreMetrics.NCLOC);
 	}
 	
-	double[] getDistributionValues(Measure measure) {
-		return getValuesInPercentage(super.getDistributionValues(measure));
+	double[] getDistribution(Measure measure) {
+		return getValuesInPercentage(getDistributionValues(measure));
 	}
 	
 	public Metric getDecoratedMetric() {

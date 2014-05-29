@@ -72,14 +72,15 @@ public abstract class AbstractDistributionDecorator extends AbstractDecorator im
 		int value = MeasureUtils.getValue(context.getMeasure(CoreMetrics.NCLOC), 0.0).intValue();
 		RangeDistributionBuilder distribution = new RangeDistributionBuilder(resultMetric, bottomLimits);
 		distribution.add(measure, value);
-		
-		if (measure > bottomLimits[0].intValue()) {
+		if (measure > bottomLimits[0].intValue() || measure > bottomLimits[1].intValue()) {
 			logger.warn("MinusMinus grade given for ["+getMetric().getKey()+"] with value ["+measure+"] and nloc ["+value+"] to: "+context.getResource().getLongName());
 		}
 		if (measure > bottomLimits[1].intValue()) {
 			logger.warn("Minus grade given for ["+getMetric().getKey()+"] with value ["+measure+"] and nloc ["+value+"] to: "+context.getResource().getLongName());
 		}
-		
+		if (measure > bottomLimits[2].intValue()) {
+			logger.warn("Zero grade given for ["+getMetric().getKey()+"] with value ["+measure+"] and nloc ["+value+"] to: "+context.getResource().getLongName());
+		}
 		return distribution.build();
 	}
 

@@ -1,10 +1,11 @@
 package dk.mimer.mmetric.sonar.decorators;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.fest.util.Arrays;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import dk.mimer.mmetric.sonar.value.MeasureWeight;
 
 public class MethodComplexityWeightTest {
 
+	private static final String[] ROW_HEADERS = new String[] {" 50 ≤	     ", " 20 - 50    ", " 10 - 20    ", " < 10       "};
+	
 	@Test
 	public void testDecoratedNotSameAsMetric() {
 		MethodComplexityWeight d = new MethodComplexityWeight();
@@ -85,6 +88,16 @@ public class MethodComplexityWeightTest {
 		assertEquals(MeasureWeight.PLUS_PLUS, runCalculationWithMock("0=110;10=2;20=0;50=0"));
 		assertEquals(MeasureWeight.PLUS_PLUS, runCalculationWithMock("0=97;10=0;20=0;50=0"));
 	}
+	
+	@Test
+	public void testCalculationPhi() {
+		
+		// 84,1%, 9,8% 6,0% 0.0
+		assertEquals(MeasureWeight.ZERO, runCalculationWithMock("0=4071;10=476;20=291;50=0"));
+	}
+	
+	
+	
 	
 	@Test
 	public void testIsVeryLowValue() {
@@ -159,6 +172,33 @@ public class MethodComplexityWeightTest {
 		assertTrue(mlocw.isMinusMinus(new double[]{ 94,0,0,6}));
 		assertTrue(mlocw.isMinusMinus(new double[]{ 0.0,0.0,5.0,95.0}));
 	}
+	
+	@Test
+	public void testBuildComplexityForAllProjects() {
+		List<String[]> dataset = new ArrayList<String[]>();
+		dataset.add(new String[] {"++", "Complexity", "MMetric initial", "0=499;10=34;20=0;50=0"});
+		dataset.add(new String[] {"++", "Complexity", "MMetric latest", "0=480;10=48;20=0;50=0"});
+		
+		dataset.add(new String[] {"0", "Complexity", "Delta latest", "0=4071;10=476;20=291;50=0"});
+		
+		dataset.add(new String[] {"-", "Complexity", "Gamma initial", "0=40095;10=9943;20=3401;50=1470"});
+		dataset.add(new String[] {"-", "Complexity", "Gamma latest", "0=47510;10=9918;20=3109;50=1464"});
+		
+		dataset.add(new String[] {"--", "Complexity", "Phi initial", "0=87442;10=17546;20=14729;50=8025"});
+		dataset.add(new String[] {"--", "Complexity", "Phi latest", "0=93842;10=18676;20=15714;50=8615"});
+		 
+		for (int i = 0; i < dataset.size(); i++) {
+			System.out.println("Testing : "+dataset.get(i)[2]);
+			assertEquals(MeasureWeight.fromValue(dataset.get(i)[0]), runCalculationWithMock(dataset.get(i)[3]));
+		}
+		System.out.println("Print all datasets....");
+		
+		for (int i = 0; i < dataset.size(); i++) {
+			TableUtil.printTable(dataset.get(i)[1], dataset.get(i)[2], ROW_HEADERS, dataset.get(i)[3], new MethodLinesOfCodeWeight());
+		}
+	}
+	
+	
 	
 
 	private MeasureWeight runCalculationWithMock(String data) {

@@ -1,20 +1,20 @@
 package dk.mimer.mmetric.sonar.decorators;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.sonar.api.batch.DecoratorContext;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.Metric;
-import org.sonar.api.resources.File;
-import org.sonar.api.resources.JavaFile;
-import org.sonar.api.resources.Language;
 import org.sonar.api.resources.Method;
 import org.sonar.api.resources.Project;
 import org.sonar.java.api.JavaClass;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class AbstractDecoratorTest {
 
@@ -39,10 +39,28 @@ public class AbstractDecoratorTest {
 	}
 	
 	@Test
+	public void testToString() {
+		TestableDecorator td = new TestableDecorator();
+		assertEquals("TestableDecorator", td.toString());
+	}
+	
+	public void test() {
+		DecoratorContext context = mock(DecoratorContext.class);
+		when(context.getResource()).thenReturn(new Project("ANY_PROJECT"));
+		assertTrue(new TestableDecorator().shouldPersistMeasures(context));
+	}
+	
+	@Test
 	public void testFileIsNotPersisted() {
 		DecoratorContext context = mock(DecoratorContext.class);
-		when(context.getResource()).thenReturn(new File("ANY_KEY"));
-		assertFalse(new TestableDecorator().shouldPersistMeasures(context));
+		double anyValue = 12.5d;
+		Metric ANY_METRIC = CoreMetrics.NCLOC;
+		Measure measure = new Measure(ANY_METRIC);
+		measure.setValue(anyValue);
+		when(context.getMeasure(ANY_METRIC)).thenReturn(measure);
+		assertEquals(anyValue,new TestableDecorator().getMetricValue(context, ANY_METRIC), 0);
+		verify(context).getMeasure(ANY_METRIC);
+		
 	}
 	
 	@Test

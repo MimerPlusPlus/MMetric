@@ -30,11 +30,7 @@ public abstract class AbstractDecorator implements MetricDecorator {
 			logger.debug("Saving Measure: "+measure.getMetric()+" data: "+measure.getData());
 			context.saveMeasure(measure);
 		} else {
-			logger.info("\nUps! Trying to save the same measure twice! ("+context.getResource().getLongName()+")");
-			Measure oldMeasure = context.getMeasure(measure.getMetric());
-			logger.debug(oldMeasure.getMetricKey() +" <-> "+measure.getMetric());
-			logger.debug(oldMeasure.getData() +" <-> "+measure.getData());
-			logger.debug(oldMeasure.getValue() +" <-> "+measure.getValue());
+			logger.warn("\nUps! Trying to save the same measure twice! ("+context.getResource().getLongName()+")");
 		}
 	}
 

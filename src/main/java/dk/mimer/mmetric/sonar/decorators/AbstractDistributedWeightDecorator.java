@@ -7,6 +7,7 @@ import static dk.mimer.mmetric.sonar.value.MeasureWeight.PLUS_PLUS;
 import static dk.mimer.mmetric.sonar.value.MeasureWeight.ZERO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,11 +25,13 @@ public abstract class AbstractDistributedWeightDecorator extends AbstractWeightD
 		Measure measure = context.getMeasure(getDecoratedMetric());
 		logger.info("Calculating distributed weight : "+measure);
 		if (measure != null) {
-			double[] values = getDistributionValues(measure);
+			double[] values = getDistribution(measure);
 			weight = evaluateRisk(values);
 		}
 		return weight;
 	}
+
+	abstract double[] getDistribution(Measure measure);
 
 	/**
 	 * Calculate the distribution values, from SonarQube data field. Data fields are
@@ -39,7 +42,6 @@ public abstract class AbstractDistributedWeightDecorator extends AbstractWeightD
 	 */
 	double[] getDistributionValues(Measure measure) {
 		String data = measure.getData();
-		logger.info("Data for ["+measure.getMetricKey()+"]: "+data);
 		double[] values = new double[getVolumeDistribution().length];
 		String[] split = data.split(";");
 		HashMap<Double, Double> map = new HashMap<Double, Double>();
@@ -53,7 +55,6 @@ public abstract class AbstractDistributedWeightDecorator extends AbstractWeightD
 		for (int i = 0; i < keys.size(); i++) {
 			values[i] = map.get(keys.get(i));
 		}
-		logger.info("Values: "+values[0]+","+values[1]+","+values[2]+","+values[3]+",");
 		return values;
 	}
 	
@@ -77,6 +78,7 @@ public abstract class AbstractDistributedWeightDecorator extends AbstractWeightD
 	}
 	
 	protected MeasureWeight evaluateRisk(double[] values) {
+		logger.info("Evaluating weight of data for ["+getMetric().getKey()+"]: "+Arrays.toString(values));
 		int minimumWeight = PLUS_PLUS.getValue();
 		for (Risk risk : Risk.values()) {
 			int riskWeight = calculateRiskValue(values[risk.getValue()], getRiskBoundries(risk));
@@ -94,57 +96,10 @@ public abstract class AbstractDistributedWeightDecorator extends AbstractWeightD
 				riskValue = (PLUS_PLUS.getValue() - i);
 			}
 		}
-		System.out.println("Returning :"+riskValue);
 		return riskValue;
 	}
 
 	abstract double[] getRiskBoundries(Risk risk);
-
-	/*
-	private MeasureWeight evaluateRisk(double[] values) {
-		MeasureWeight weight = null;
-		if (isVeryLowRisk(values)) {
-			weight = PLUS_PLUS;
-		} else if (isLowRisk(values)) {
-			weight = PLUS;
-		} else if (isMediumRisk(values)) {
-			weight = MeasureWeight.ZERO;
-		} else if (isHighRisk(values)) {
-			weight = MINUS;
-		} else {
-			weight = MINUS_MINUS;
-		}
-		System.out.println("Evaluating Risk for : Low:["+values[0]+"] Medium:["+values[1]+"] High:["+values[2]+"] Very high:["+values[3]+"] = "+weight);
-		return weight;
-	}*/
-	
-	/*
-	private boolean holdsUpperBounds(MeasureWeight measureWeight, double[] values) {
-		boolean hold = true;
-		double[] boundries = getRiskBoundries(measureWeight);
-		for (int i = 0; hold && i < boundries.length; i++) {
-			hold = (boundries[i] < 0 || values[i]== 0 || values[i] <= boundries[i]); // Less that 0 is not good ;-)
-			if (!hold) {
-				System.out.println("Failed Upper Boundry test ["+i+"]: "+values[i]+ " <= "+boundries[i]);
-			}
-		}
-		return hold;
-	}*/
-	
-	/** All must be lower than their bounds! */
-	/*
-	private boolean allLowerThanBounds(MeasureWeight measureWeight, double[] values) {
-		boolean hold = true;
-		double[] boundries = getRiskBoundries(measureWeight);
-		for (int i = 0; hold && i < boundries.length; i++) {
-			hold = (boundries[i] < 0 || values[i]== 0 || values[i] < boundries[i]); // Less that 0 is not good ;-)
-			if (!hold) {
-				System.out.println("allLower: Failed Boundry test ["+i+"]: "+values[i]+ " < "+boundries[i]);
-			}
-		}
-		return hold;
-	}*/
-	
 
 	boolean isPlusPlus(double[] values) {
 		return PLUS_PLUS.equals(evaluateRisk(values));
